@@ -39,9 +39,7 @@ VectorXd UKF::update(VectorXd &x, double dt, VectorXd accel, VectorXd gyro)
     W.block(0, 0, 6, 6) = sqrt(6) * S;
     W.block(0, 6, 6, 1) = zeroVector;
     W.block(0, 7, 6, 6) = -sqrt(6) * S;
-
     MatrixXd X = perturbmat(x, W);
-
     MatrixXd Y = A(X, dt);
     MatrixXd Ysvd = Y.block(0, 0, 4, 13) * Y.block(0, 0, 4, 13).transpose() / 13.0;
     JacobiSVD<MatrixXd> svd(Ysvd, ComputeThinU | ComputeThinV);
@@ -121,7 +119,7 @@ VectorXd UKF::update(VectorXd &x, double dt, VectorXd accel, VectorXd gyro)
     K = Pxz * (Pvv.inverse());
     VectorXd stateupdate(6);
     VectorXd flipvector(6);
-    flipvector << -1, //not sure why needed, this its due to the e_q flip.
+    flipvector << -1, //not sure why needed, this is due to the e_q flip.
         -1,
         -1,
         1,
@@ -130,45 +128,16 @@ VectorXd UKF::update(VectorXd &x, double dt, VectorXd accel, VectorXd gyro)
     stateupdate = (K * v).array() * flipvector.array();
     x = perturbvec(xapri, stateupdate);
     P = Papri - K * Pvv * K.transpose();
-
-    // cout << S << endl;
-    // cout << "W " << W << endl;
-    // cout << "X " << X << endl;
-    // cout << "xapri \n"<<xapri<<endl;
-    // cout << "eq col " << xapri.head<4>().array() * e_qvec.array() << endl;
-    // cout << "Y "<<Y<<endl;
-    // cout << "Ysvd \n" << Ysvd << endl;
-    // cout << "Y_q " << Y_q << endl;
-    // cout << "Y_qU " << Y_qU << endl;
-    // cout << "e_q "<<e_q<<endl;
-    // cout << "Wp "<<Wp<<endl;
-    // cout << "Papri "<<Papri<<endl;
-    // cout << "Z "<<Z<<endl;
-    // cout << "zapri "<<zapri<<endl;
-    // cout << "Pzz "<<Pzz<<endl;
-    // cout << "accel "<<accel<<endl;
-    // cout << "zapri "<<zapri<<endl;
-    // cout << "v "<<v<<endl;
-    // cout << "Pvv "<< Pvv <<endl;
-    // cout << "Zerr "<<Zerr.transpose()<<endl;
-    // cout << "Wp "<<Wp<<endl;
-    // cout << "Pxz "<<Pxz<<endl;
-    // cout << "K "<<K<<endl;
-    // cout << "stateupdate "<<stateupdate<<endl;
-    // cout << "x " << x << endl;
-    // cout << "P "<<P<<endl;
     return x;
 }
 
 MatrixXd UKF::perturbmat(const VectorXd &x, const MatrixXd &W)
 {
     MatrixXd X(7, W.cols());
-
     for (int i = 0; i < W.cols(); i++)
     {
         X.col(i).head<4>() = rotq(x.head<4>(), W.col(i).head<3>());
         X.col(i).tail<3>() = x.tail<3>() + W.col(i).tail<3>();
-        // cout << "x column " << X.col(i) << endl;
     }
     return X;
 }
@@ -177,7 +146,6 @@ VectorXd UKF::perturbvec(VectorXd xapri, VectorXd update)
     VectorXd x(7);
     x.head<4>() = rotq(xapri.head<4>(), update.head<3>());
     x.tail<3>() = xapri.tail<3>() + update.tail<3>();
-
     return x;
 }
 
@@ -186,7 +154,6 @@ VectorXd UKF::rotq(const VectorXd x, const VectorXd v)
     VectorXd qvec(4);
     qvec = quatmult(v2q(v), x);
     qvec.normalize();
-    // cout << "qvec " << qvec << endl;
     return qvec;
 }
 
@@ -195,7 +162,6 @@ MatrixXd UKF::A(const MatrixXd X, double dt)
     MatrixXd Y(7, 13);
     for (int i = 0; i < X.cols(); i++)
     {
-        // cout << "x*dt " << X.col(i).tail<3>() * dt << endl;
         Y.col(i).head<4>() = rotq(X.col(i).head<4>(), (X.col(i).tail<3>() * dt));
         Y.col(i).tail<3>() = X.col(i).tail<3>();
     }
@@ -205,7 +171,6 @@ MatrixXd UKF::A(const MatrixXd X, double dt)
 VectorXd UKF::v2q(const VectorXd v)
 {
     float vnorm = v.norm();
-    // cout << "vnorm " << vnorm << endl;
     VectorXd qvec(4);
     qvec(0) = cos(vnorm * 0.5);
     qvec.tail<3>() = v * sin(vnorm * 0.5) / (vnorm);
@@ -217,7 +182,6 @@ VectorXd UKF::v2q(const VectorXd v)
             0;
     }
     qvec.normalize();
-    // cout << "v2q(v) " << q << endl;
     return qvec;
 }
 
@@ -232,7 +196,6 @@ VectorXd UKF::q2v(const VectorXd q)
             0,
             0;
     }
-
     return v;
 }
 
@@ -243,9 +206,7 @@ VectorXd UKF::quatmult(const VectorXd Y, const VectorXd X)
     qvec(1) = Y(1) * X(0) + Y(0) * X(1) - Y(3) * X(2) + Y(2) * X(3);
     qvec(2) = Y(2) * X(0) + Y(3) * X(1) + Y(0) * X(2) - Y(1) * X(3);
     qvec(3) = Y(3) * X(0) - Y(2) * X(1) + Y(1) * X(2) + Y(0) * X(3);
-
     qvec.normalize();
-    // cout << "qvec " << qvec << endl;
     return qvec;
 }
 
