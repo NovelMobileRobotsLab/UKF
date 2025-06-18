@@ -1,2 +1,60 @@
 # UKF
 Unscented Kalman Filter for attitude estimation using accelerometer and gyroscope data.
+
+## Dependencies
+
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
+
+## Installation
+
+To use this library in a CMake build, you only need Eigen included in CMake on your RaspberryPi. (or in same folder location as UKF.hpp)
+
+## Usage
+Add UKF object 
+```
+UKF ukf;
+```
+
+Initialize UKF
+```
+x << 1, //starting vector (quaternion [1-4], gyro [5-7])
+0,
+0,
+0,
+0,
+0,
+0;
+
+ukf.initialize(x);
+```
+
+Update UKF and poll values
+```
+x = ukf.update(x, .001, accel, gyro); // accel and gyro are Eigen::Vector3d and dt is double(time between last update and                                          //this update, can be variable). x is the state vector (7) that has already been init.
+            qw = x(0);
+            qx = x(1);
+            qy = x(2);
+            qz = x(3);
+            gyrox = x(4);
+            gyroy = x(5);
+            gyroz = x(6);
+```
+Tune parameters of variations and noise IN UKF.cpp
+```
+UKF::UKF()
+{
+    P = MatrixXd::Identity(6,6) * 5e-2; // State Uncertainty
+    Q = MatrixXd::Identity(6, 6) * 1e-2; // Process Noise
+    R = MatrixXd::Identity(6, 6) * 5e-2; // Measurement Noise
+    R(2, 2) = 8e-2;
+    R.block(3, 3, 3, 3) = MatrixXd::Identity(3, 3) * .005;
+}
+```
+
+## Notes
+- Make sure you're not using the same poll form the IMU as this would be "doubling up" on the sensor reading and not using the correct distribution of the data
+- Sample the UKF at the same rate as the IMU, ensuring the data is fresh and you have a correct dt to use in the UKF.
+- In the incl folder, there are a version of UKF for MATLAB from which this is based on from Prof. Justin Yim's Ph.D. coursework at UC Berkeley.
+## Resources
+- https://groups.seas.harvard.edu/courses/cs281/papers/unscented.pdf
+
