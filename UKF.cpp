@@ -6,19 +6,17 @@ using namespace Eigen;
 
 UKF::UKF()
 {
-    // x = VectorXd::Zero(7);               // state vector
-    // P = MatrixXd::Identity(6, 6);        // State Uncertainty
+    P = MatrixXd::Identity(6,6) * 5e-2; // State Uncertainty
     Q = MatrixXd::Identity(6, 6) * 1e-2; // Process Noise
     R = MatrixXd::Identity(6, 6) * 5e-2; // Measurement Noise
     R(2, 2) = 8e-2;
     R.block(3, 3, 3, 3) = MatrixXd::Identity(3, 3) * .005;
 }
 
-void UKF::initialize(const VectorXd &x0, const MatrixXd &P0)
+void UKF::initialize(const VectorXd &x0)
 {
     x = x0;                // initialize state vector
-    P = P0;                // initialize State Uncertainty (tuning param)
-    normalizeQuaternion(); // normalize the quaternion part of the state vector
+    normalizeQuaternion(); // normalize the quaternion part of the state vector   
 }
 
 void UKF::normalizeQuaternion()
@@ -185,16 +183,6 @@ VectorXd UKF::perturbvec(VectorXd xapri, VectorXd update)
 
 VectorXd UKF::rotq(const VectorXd x, const VectorXd v)
 {
-    // Quaterniond xq;
-    // xq.w() = x(0);
-    // xq.vec() = x.tail<3>();
-    // cout << "xq" << xq << endl;
-    // Quaterniond q;
-    // in Eigen * is override for quaternion multipication between two quaternion data types
-    // cout << "q " << q << endl;
-    // qvec(0) = q.w();
-    // qvec.tail<3>() = q.vec();
-
     VectorXd qvec(4);
     qvec = quatmult(v2q(v), x);
     qvec.normalize();
@@ -244,23 +232,12 @@ VectorXd UKF::q2v(const VectorXd q)
             0,
             0;
     }
-    // cout << "q2v(q) " << v << endl;
+
     return v;
 }
 
 VectorXd UKF::quatmult(const VectorXd Y, const VectorXd X)
 {
-    // Quaterniond q1;
-    // q1.w() = Y(0);
-    // q1.vec() = Y.tail<3>();
-    // Quaterniond q2;
-    //    q2.w() = X(0);
-    // q2.vec() = X.tail<3>();
-    // Quaterniond q;
-    // q  = q1*q2;
-    // qvec(0) = q.w();
-    // qvec.tail<3>() = q.vec();
-
     VectorXd qvec(4);
     qvec(0) = Y(0) * X(0) - Y(1) * X(1) - Y(2) * X(2) - Y(3) * X(3);
     qvec(1) = Y(1) * X(0) + Y(0) * X(1) - Y(3) * X(2) + Y(2) * X(3);
