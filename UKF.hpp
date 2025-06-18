@@ -10,7 +10,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     UKF();
-    void initialize(const VectorXd& x0, const MatrixXd& P0);
+    void initialize(const VectorXd &x0);
     VectorXd update(VectorXd &x, double dt, VectorXd accel, VectorXd gyro);
     Quaterniond getOrientation() const;
 
