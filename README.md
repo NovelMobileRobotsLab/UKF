@@ -1,5 +1,5 @@
 # UKF
-Unscented Kalman Filter for attitude estimation using accelerometer and gyroscope data.
+Unscented Kalman Filter for attitude estimation using accelerometer and gyroscope data. The Unscented Kalman Filter (UKF) is a state estimation algorithm designed for nonlinear systems. It builds upon the standard Kalman filter but uses the unscented transform to better handle the non-linearities inherent in many real-world systems. Instead of linearizing the system equations (as in the Extended Kalman Filter), the UKF employs a deterministic sampling approach called the unscented transform to approximate the probability distribution of the state.
 
 ## Dependencies
 
