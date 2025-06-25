@@ -52,9 +52,9 @@ UKF::UKF()
 ```
 
 ## Notes
-- Make sure you're not using the same poll form the IMU as this would be "doubling up" on the sensor reading and not using the correct distribution of the data
+- Make sure you're not using the same poll from the IMU as this would be "doubling up" on the sensor reading and not using the correct distribution of the data
 - Sample the UKF at the same rate as the IMU, ensuring the data is fresh and you have a correct dt to use in the UKF.
-- In the incl folder, there are a version of UKF for MATLAB from which this is based on from Prof. Justin Yim's Ph.D. coursework at UC Berkeley.
+- In the incl folder, there are versions of UKF for MATLAB, which this is based on, from Prof. Justin Yim's Master's coursework at UPenn.
 ## Resources
 - https://groups.seas.harvard.edu/courses/cs281/papers/unscented.pdf
 
