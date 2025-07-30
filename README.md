@@ -57,4 +57,4 @@ UKF::UKF()
 - In the incl folder, there are versions of UKF for MATLAB, which this is based on, from Prof. Justin Yim's Master's coursework at UPenn.
 ## Resources
 - https://groups.seas.harvard.edu/courses/cs281/papers/unscented.pdf
-
+- [E. Kraft, "A quaternion-based unscented Kalman filter for orientation tracking," Sixth International Conference of Information Fusion, 2003. Proceedings of the, Cairns, QLD, Australia, 2003, pp. 47-54, doi: 10.1109/ICIF.2003.177425.](https://ieeexplore.ieee.org/document/1257247)
